@@ -7,7 +7,7 @@ from typing import Dict, List, Optional
 
 import requests
 
-BINANCE_BASE_URL = "https://api.binance.com"
+BINANCE_BASE_URL = "https://fapi.binance.com"
 TELEGRAM_BASE_URL = "https://api.telegram.org"
 
 
@@ -77,7 +77,7 @@ class BinanceAthWatcher:
             logging.info("Loaded ATH for %s: %s", symbol, ath)
 
     def fetch_all_time_high(self, symbol: str) -> float:
-        endpoint = f"{BINANCE_BASE_URL}/api/v3/klines"
+        endpoint = f"{BINANCE_BASE_URL}/fapi/v1/klines"
         start_time: Optional[int] = None
         ath = 0.0
 
@@ -113,7 +113,7 @@ class BinanceAthWatcher:
         return ath
 
     def fetch_current_price(self, symbol: str) -> float:
-        endpoint = f"{BINANCE_BASE_URL}/api/v3/ticker/price"
+        endpoint = f"{BINANCE_BASE_URL}/fapi/v1/ticker/price"
         payload = self._get_json(endpoint, params={"symbol": symbol})
         return float(payload["price"])
 
