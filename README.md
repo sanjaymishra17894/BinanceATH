@@ -64,13 +64,14 @@ The bot automatically loads variables from `.env` if present. Explicit environme
 
 ## Configuration
 
-| Variable            | Default | Description |
-|---------------------|---------|-------------|
-| `TELEGRAM_BOT_TOKEN`| —       | Telegram bot token from BotFather (required) |
-| `TELEGRAM_CHAT_ID`  | —       | Target channel/chat ID (required) |
-| `TOP_COINS`         | —       | Comma-separated USDT-M Futures symbols, e.g. `BTCUSDT,ETHUSDT` (required) |
-| `POLL_SECONDS`      | `60`    | Seconds between price polls |
-| `WINDOW_HOURS`      | `24`    | Rolling window in hours used to compute the high baseline |
+| Variable               | Default | Description |
+|------------------------|---------|-------------|
+| `TELEGRAM_BOT_TOKEN`   | —       | Telegram bot token from BotFather (required) |
+| `TELEGRAM_CHAT_ID`     | —       | Target channel/chat ID (required) |
+| `TOP_COINS`            | —       | Comma-separated USDT-M Futures symbols, e.g. `BTCUSDT,ETHUSDT` (required) |
+| `POLL_SECONDS`         | `60`    | Seconds between price polls |
+| `WINDOW_HOURS`         | `24`    | Rolling window in hours used to compute the high baseline |
+| `SEND_STARTUP_SUMMARY` | `1`     | Set to `0` to disable the startup Telegram summary message |
 
 ## Notes
 

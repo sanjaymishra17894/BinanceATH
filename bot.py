@@ -36,6 +36,7 @@ class BotConfig:
     symbols: List[str]
     poll_seconds: int = 60
     window_hours: int = 24
+    send_startup_summary: bool = True
 
     @classmethod
     def from_env(cls) -> "BotConfig":
@@ -59,12 +60,17 @@ class BotConfig:
             if not symbol.endswith("USDT"):
                 raise ValueError(f"Only USDT pairs are supported, got: {symbol}")
 
+        send_startup_summary = os.getenv("SEND_STARTUP_SUMMARY", "1").strip().lower() not in (
+            "0", "false", "no", "off",
+        )
+
         return cls(
             telegram_bot_token=token,
             telegram_chat_id=chat_id,
             symbols=symbols,
             poll_seconds=poll_seconds,
             window_hours=window_hours,
+            send_startup_summary=send_startup_summary,
         )
 
 
@@ -164,6 +170,43 @@ class BinanceAthWatcher:
             "Sent %dh high-break alert for %s", self.config.window_hours, symbol
         )
 
+    def send_startup_summary(self) -> None:
+        """Send a single Telegram message listing each symbol's window high baseline."""
+        now_utc = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
+        max_len = max(len(s) for s in self.config.symbols)
+        lines = []
+        for symbol in self.config.symbols:
+            high = self.current_window_high_by_symbol.get(symbol)
+            value = f"{high:.6f}" if high is not None else "N/A"
+            lines.append(f"{symbol:<{max_len}}: {value}")
+
+        message = (
+            f"✅ BinanceATH Bot Started (USDT-M Futures)\n"
+            f"\n"
+            f"Window: last {self.config.window_hours}h high (interval: 1h)\n"
+            f"Time (UTC): {now_utc}\n"
+            f"\n"
+            f"{self.config.window_hours}h Window Highs:\n"
+            + "\n".join(lines)
+        )
+
+        endpoint = (
+            f"{TELEGRAM_BASE_URL}/bot{self.config.telegram_bot_token}/sendMessage"
+        )
+        try:
+            response = self.session.post(
+                endpoint,
+                json={
+                    "chat_id": self.config.telegram_chat_id,
+                    "text": message,
+                },
+                timeout=15,
+            )
+            response.raise_for_status()
+            logging.info("Sent startup summary to Telegram")
+        except Exception as exc:
+            logging.error("Failed to send startup summary: %s", exc)
+
     def monitor_loop(self) -> None:
         # Refresh strategy: the rolling window high is recomputed from Binance
         # klines on every poll cycle.  With a 1h interval this is a single API
@@ -211,6 +254,8 @@ def main() -> None:
     watcher = BinanceAthWatcher(config)
 
     watcher.initialize_window_high_values()
+    if config.send_startup_summary:
+        watcher.send_startup_summary()
     logging.info("Started monitoring symbols: %s", ", ".join(config.symbols))
     watcher.monitor_loop()
 
