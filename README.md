@@ -1,12 +1,12 @@
 # Binance ATH Telegram Bot
 
-This bot monitors a custom list of USDT trading pairs on Binance and sends a Telegram message whenever a symbol breaks its all-time high (ATH).
+This bot monitors a custom list of USDT-M Futures trading pairs on Binance and sends a Telegram message whenever a symbol breaks its all-time high (ATH).
 
 ## What it does
 
 - You provide the coin list (for example top 10 symbols).
-- The bot fetches each symbol's ATH from Binance daily candles.
-- It polls the latest price continuously.
+- The bot fetches each symbol's ATH from Binance USDT-M Futures daily candles.
+- It polls the latest futures price continuously.
 - If the current price is higher than the known ATH, it sends a Telegram alert to your channel.
 
 Message format:
@@ -39,6 +39,6 @@ The bot automatically loads variables from `.env` if present. Explicit environme
 
 ## Notes
 
-- Only `USDT` pairs are supported.
+- Only `USDT` pairs (USDT-M Futures symbols) are supported.
 - The bot sends one alert each time a new ATH is reached and then updates the stored ATH.
 - Keep the process running with `screen`, `tmux`, Docker, or systemd for production.
