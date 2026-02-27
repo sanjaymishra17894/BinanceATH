@@ -2,6 +2,7 @@ import logging
 import os
 import time
 from dataclasses import dataclass
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Dict, List, Optional
 
@@ -121,10 +122,37 @@ class BinanceAthWatcher:
         endpoint = (
             f"{TELEGRAM_BASE_URL}/bot{self.config.telegram_bot_token}/sendMessage"
         )
+        break_pct = (new_price - old_ath) / old_ath * 100
+        long_tp = new_price * (1 + break_pct / 100)
+        now_utc = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
+        sep = "━" * 20
         message = (
-            f"COIN: {symbol}\n"
-            f"NEW All Time High: {new_price}\n"
-            f"ATH Break: {old_ath}"
+            f"🚀 NEW ATH (USDT-M Futures)\n"
+            f"\n"
+            f"Symbol: {symbol}\n"
+            f"Last Price: {new_price:.6f}\n"
+            f"Old ATH:    {old_ath:.6f}\n"
+            f"New ATH:    {new_price:.6f}\n"
+            f"Break %:    {break_pct:+.2f}%\n"
+            f"\n"
+            f"{sep}\n"
+            f"📌 Trade Ideas (Example)\n"
+            f"Interval: 1d candles\n"
+            f"Time (UTC): {now_utc}\n"
+            f"\n"
+            f"1) 📈 LONG (momentum continuation)\n"
+            f"   Entry (Now):        {new_price:.6f}\n"
+            f"   Pump % (from ATH):  {break_pct:+.2f}%\n"
+            f"   TP (same +% move):  {long_tp:.6f}\n"
+            f"\n"
+            f"2) 📉 SHORT (retest / mean reversion)\n"
+            f"   Entry (Now):        {new_price:.6f}\n"
+            f"   TP (Old ATH level): {old_ath:.6f}\n"
+            f"\n"
+            f"Notes:\n"
+            f"- LONG TP = Entry * (1 + Pump%/100)\n"
+            f"- SHORT TP = Old ATH\n"
+            f"{sep}"
         )
 
         response = self.session.post(
