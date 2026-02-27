@@ -12,9 +12,32 @@ This bot monitors a custom list of USDT-M Futures trading pairs on Binance and s
 Message format:
 
 ```text
-COIN: BTCUSDT
-NEW All Time High: 70000.12
-ATH Break: 69999.99
+🚀 NEW ATH (USDT-M Futures)
+
+Symbol: VVVUSDT
+Last Price: 0.123456
+Old ATH:    0.120000
+New ATH:    0.123456
+Break %:    +2.88%
+
+━━━━━━━━━━━━━━━━━━━━
+📌 Trade Ideas (Example)
+Interval: 1d candles
+Time (UTC): 2026-02-27 10:25:12
+
+1) 📈 LONG (momentum continuation)
+   Entry (Now):        0.123456
+   Pump % (from ATH):  +2.88%
+   TP (same +% move):  0.127012
+
+2) 📉 SHORT (retest / mean reversion)
+   Entry (Now):        0.123456
+   TP (Old ATH level): 0.120000
+
+Notes:
+- LONG TP = Entry * (1 + Pump%/100)
+- SHORT TP = Old ATH
+━━━━━━━━━━━━━━━━━━━━
 ```
 
 ## Setup
