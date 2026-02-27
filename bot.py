@@ -2,12 +2,30 @@ import logging
 import os
 import time
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Dict, List, Optional
 
 import requests
 
 BINANCE_BASE_URL = "https://api.binance.com"
 TELEGRAM_BASE_URL = "https://api.telegram.org"
+
+
+def load_env_file(path: str = ".env") -> None:
+    env_path = Path(path)
+    if not env_path.exists():
+        return
+
+    for raw_line in env_path.read_text(encoding="utf-8").splitlines():
+        line = raw_line.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+
+        key, value = line.split("=", 1)
+        key = key.strip()
+        value = value.strip().strip('"').strip("'")
+        if key and key not in os.environ:
+            os.environ[key] = value
 
 
 @dataclass
@@ -147,6 +165,7 @@ def main() -> None:
         format="%(asctime)s [%(levelname)s] %(message)s",
     )
 
+    load_env_file()
     config = BotConfig.from_env()
     watcher = BinanceAthWatcher(config)
 

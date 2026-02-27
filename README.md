@@ -22,7 +22,7 @@ ATH Break: 69999.99
 1. Create a Telegram bot with BotFather.
 2. Add the bot to your Telegram channel and make it admin.
 3. Get your channel chat ID.
-4. Copy `.env.example` values into your environment.
+4. Copy `.env.example` to `.env` and fill in your values.
 
 ## Run
 
@@ -30,12 +30,12 @@ ATH Break: 69999.99
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
-export TELEGRAM_BOT_TOKEN='your_bot_token'
-export TELEGRAM_CHAT_ID='your_channel_or_chat_id'
-export TOP_COINS='BTCUSDT,ETHUSDT,BNBUSDT,SOLUSDT,XRPUSDT,ADAUSDT,DOGEUSDT,TRXUSDT,AVAXUSDT,LINKUSDT'
-export POLL_SECONDS='60'
+cp .env.example .env
+# edit .env with your bot token and chat id
 python bot.py
 ```
+
+The bot automatically loads variables from `.env` if present. Explicit environment variables still take priority.
 
 ## Notes
 
